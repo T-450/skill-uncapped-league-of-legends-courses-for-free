@@ -1,0 +1,969 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SkillUncapped</title>
+  <style>
+    :root {
+      --background-dark: #121212;
+      --surface-dark: #1e1e1e;
+      --primary-color: #3498db;
+      --success-color: #2ecc71;
+      --text-primary: #ffffff;
+      --text-secondary: #b3b3b3;
+      --border-color: #333333;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    }
+
+    body {
+      background-color: var(--background-dark);
+      color: var(--text-primary);
+      padding: 2rem;
+      max-width: 1400px;
+      margin: 0 auto;
+      min-height: 100vh;
+    }
+
+    .container {
+      background: var(--surface-dark);
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .header {
+      margin-bottom: 2rem;
+      text-align: center;
+    }
+
+    .header h1 {
+      color: var(--text-primary);
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+    }
+
+    .header p {
+      color: var(--text-secondary);
+      font-size: 1rem;
+    }
+
+    .input-group {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .input-group input {
+      flex: 1;
+      padding: 12px 16px;
+      border: 2px solid var(--border-color);
+      border-radius: 8px;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+      background-color: rgba(255, 255, 255, 0.05);
+      color: var(--text-primary);
+    }
+
+    .input-group input:focus {
+      outline: none;
+      border-color: var(--primary-color);
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .btn {
+      padding: 12px 24px;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .btn-primary {
+      background-color: var(--primary-color);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background-color: #2980b9;
+      transform: translateY(-1px);
+    }
+
+    .btn-success {
+      background-color: var(--success-color);
+      color: white;
+    }
+
+    .btn-success:hover {
+      background-color: #27ae60;
+      transform: translateY(-1px);
+    }
+
+    .btn:disabled {
+      background-color: #404040;
+      color: #666666;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .status {
+      text-align: center;
+      margin: 1rem 0;
+      padding: 0.8rem;
+      border-radius: 8px;
+      font-weight: 500;
+      min-height: 2.5rem;
+      color: var(--text-secondary);
+    }
+
+    .status:not(:empty) {
+      background-color: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-color);
+    }
+
+    .video-container {
+      width: 100%;
+      margin: 1rem 0;
+      border-radius: 12px;
+      overflow: hidden;
+      background-color: #000;
+      position: relative;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+    }
+
+    .video-wrapper {
+      position: relative;
+      padding-top: 56.25%;
+      /* 16:9 Aspect Ratio */
+    }
+
+    video {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #000;
+    }
+
+    /* Modern video controls */
+    video::-webkit-media-controls {
+      background: linear-gradient(transparent, rgba(0, 0, 0, 0.7));
+    }
+
+    video::-webkit-media-controls-panel {
+      background: transparent;
+    }
+
+    video::-webkit-media-controls-play-button {
+      background-color: rgba(255, 255, 255, 0.2);
+      border-radius: 50%;
+      transition: all 0.3s ease;
+    }
+
+    video::-webkit-media-controls-timeline {
+      background-color: rgba(255, 255, 255, 0.2);
+      border-radius: 4px;
+      height: 4px;
+    }
+
+    video::-webkit-media-controls-current-time-display,
+    video::-webkit-media-controls-time-remaining-display {
+      color: #fff;
+      text-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
+    }
+
+    .button-container {
+      display: flex;
+      justify-content: center;
+      margin-top: 1.5rem;
+      gap: 1rem;
+    }
+
+    /* Custom scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--background-dark);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--border-color);
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: #555;
+    }
+
+    /* Video player hover effects */
+    .video-container:hover .video-controls {
+      opacity: 1;
+    }
+
+    /* Keyboard shortcut tooltip */
+    .keyboard-shortcuts {
+      position: absolute;
+      bottom: 100%;
+      right: 0;
+      background: rgba(0, 0, 0, 0.8);
+      padding: 8px 12px;
+      border-radius: 4px;
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      display: none;
+    }
+
+    .video-container:hover .keyboard-shortcuts {
+      display: block;
+    }
+
+    @media (max-width: 768px) {
+      body {
+        padding: 1rem;
+      }
+
+      .container {
+        padding: 1rem;
+      }
+
+      .input-group {
+        flex-direction: column;
+      }
+
+      .btn {
+        width: 100%;
+      }
+
+      .keyboard-shortcuts {
+        display: none;
+      }
+    }
+
+    /* Loading animation */
+    .loading {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 40px;
+      height: 40px;
+      border: 4px solid rgba(255, 255, 255, 0.1);
+      border-radius: 50%;
+      border-top-color: var(--primary-color);
+      animation: spin 1s ease-in-out infinite;
+      display: none;
+    }
+
+    @keyframes spin {
+      to {
+        transform: translate(-50%, -50%) rotate(360deg);
+      }
+    }
+
+    .video-loading .loading {
+      display: block;
+    }
+
+    /* Add these styles to your existing CSS */
+    .input-wrapper {
+      flex: 1;
+      position: relative;
+    }
+
+    .input-wrapper input {
+      width: 100%;
+      padding: 12px 16px;
+      border: 2px solid var(--border-color);
+      border-radius: 8px;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+      background-color: rgba(255, 255, 255, 0.05);
+      color: var(--text-primary);
+    }
+
+    .input-wrapper input:focus {
+      outline: none;
+      border-color: var(--primary-color);
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .url-examples {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      margin-top: 8px;
+      background: var(--surface-dark);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 12px;
+      font-size: 0.9rem;
+      z-index: 10;
+      opacity: 0;
+      transform: translateY(-10px);
+      transition: all 0.3s ease;
+      pointer-events: none;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    .input-wrapper input:focus+.url-examples {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+
+    .url-example {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px;
+      border-radius: 4px;
+    }
+
+    .url-example:not(:last-child) {
+      margin-bottom: 8px;
+    }
+
+    .url-example .icon {
+      font-size: 1rem;
+      font-weight: bold;
+    }
+
+    .url-example.valid .icon {
+      color: var(--success-color);
+    }
+
+    .url-example.invalid .icon {
+      color: #e74c3c;
+    }
+
+    .url-example .label {
+      font-weight: 600;
+      color: var(--text-secondary);
+    }
+
+    .url-example .url {
+      color: var(--text-primary);
+      opacity: 0.8;
+      font-family: monospace;
+      font-size: 0.9rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .url-example .help-text {
+      color: #e74c3c;
+      font-style: italic;
+      margin-left: auto;
+      font-size: 0.8rem;
+    }
+
+    @media (max-width: 768px) {
+      .url-examples {
+        position: static;
+        margin-top: 8px;
+        opacity: 1;
+        transform: none;
+        pointer-events: auto;
+      }
+
+      .url-example {
+        flex-wrap: wrap;
+      }
+
+      .url-example .url {
+        width: 100%;
+        margin-left: 24px;
+        /* Align with icon + label */
+      }
+
+      .url-example .help-text {
+        width: 100%;
+        margin-left: 24px;
+        margin-top: 4px;
+      }
+    }
+
+    .download-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.85);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      backdrop-filter: blur(4px);
+      z-index: 1000;
+    }
+
+    .download-overlay.active {
+      display: flex;
+    }
+
+    .download-content {
+      text-align: center;
+      color: white;
+    }
+
+    .download-progress {
+      margin-bottom: 2rem;
+    }
+
+    .progress-ring {
+      position: relative;
+      display: inline-block;
+    }
+
+    .progress-ring__circle {
+      transform: rotate(-90deg);
+      transform-origin: 50% 50%;
+    }
+
+    .progress-ring__circle-bg {
+      fill: none;
+      stroke: rgba(255, 255, 255, 0.1);
+      stroke-width: 8;
+    }
+
+    .progress-ring__circle-progress {
+      fill: none;
+      stroke: var(--primary-color);
+      stroke-width: 8;
+      stroke-linecap: round;
+      transition: stroke-dashoffset 0.35s;
+      stroke-dasharray: 339.292;
+      stroke-dashoffset: 339.292;
+    }
+
+    .progress-text {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+    }
+
+    .progress-text .percentage {
+      font-size: 2rem;
+      font-weight: 600;
+      display: block;
+      color: var(--text-primary);
+    }
+
+    .progress-text .status {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+    }
+
+    .download-info {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .segment-count {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+    }
+
+    .btn-cancel {
+      background-color: #e74c3c;
+      color: white;
+      padding: 8px 16px;
+      font-size: 0.9rem;
+    }
+
+    .btn-cancel:hover {
+      background-color: #c0392b;
+    }
+
+    @media (max-width: 768px) {
+      .progress-ring__circle {
+        width: 100px;
+        height: 100px;
+      }
+
+      .progress-text .percentage {
+        font-size: 1.5rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>SkillUncapped Downloader</h1>
+      <p>Enter the video URL below to start streaming or downloading</p>
+    </div>
+
+    <div class="input-group">
+      <div class="input-wrapper">
+        <input type="text" id="url" placeholder="Enter Skill-Capped video URL"
+          onkeyup="if (event.key =='Enter') stream()" />
+        <div class="url-examples">
+          <div class="url-example valid">
+            <span class="icon">✓</span>
+            <span class="label">Valid:</span>
+            <span class="url">https://www.skill-capped.com/lol/commentaries/p1qcnwqt75</span>
+          </div>
+          <div class="url-example invalid">
+            <span class="icon">✗</span>
+            <span class="label">Invalid:</span>
+            <span class="url">https://www.skill-capped.com/lol/browse/course/53tzsmm7r8/fdcw91zrtc</span>
+            <span class="help-text">Remove everything after /course/</span>
+          </div>
+        </div>
+      </div>
+      <button class="btn btn-primary" onclick="stream()">Stream</button>
+    </div>
+
+    <div class="status" id="status"></div>
+
+    <div class="video-container">
+      <div class="video-wrapper">
+        <div class="loading"></div>
+        <video id="video" controls autoplay crossorigin="anonymous">
+          <p>Your browser doesn't support HTML5 video.</p>
+        </video>
+
+        <!-- download overlay -->
+        <div class="download-overlay" id="downloadOverlay">
+          <div class="download-content">
+            <div class="download-progress">
+              <div class="progress-ring">
+                <svg class="progress-ring__circle" width="120" height="120">
+                  <circle class="progress-ring__circle-bg" r="54" cx="60" cy="60" />
+                  <circle class="progress-ring__circle-progress" r="54" cx="60" cy="60" />
+                </svg>
+                <div class="progress-text">
+                  <span class="percentage">0%</span>
+                  <span class="status">Downloading</span>
+                </div>
+              </div>
+            </div>
+            <div class="download-info">
+              <div class="segment-count">Segments: <span>0/0</span></div>
+              <button class="btn btn-cancel" onclick="cancelDownload()">Cancel</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- <div class="keyboard-shortcuts">
+           ... existing keyboard shortcuts ... 
+        </div> -->
+      </div>
+
+      <div class="button-container">
+        <button id="downloadBtn" class="btn btn-success" onclick="downloadVideo()" disabled>
+          Download Video
+        </button>
+      </div>
+    </div>
+
+    <script>
+      // Add keyboard shortcuts
+      document.addEventListener('keydown', function (e) {
+        const video = document.getElementById('video');
+        if (!video) return;
+
+        switch (e.key) {
+          case ' ':
+            e.preventDefault();
+            video.paused ? video.play() : video.pause();
+            break;
+          case 'ArrowRight':
+            video.currentTime += 10;
+            break;
+          case 'ArrowLeft':
+            video.currentTime -= 10;
+            break;
+          case 'f':
+          case 'F':
+            if (document.fullscreenElement) {
+              document.exitFullscreen();
+            } else {
+              video.requestFullscreen();
+            }
+            break;
+        }
+      });
+
+      // Add loading state
+      const videoContainer = document.querySelector('.video-container');
+      const video = document.getElementById('video');
+
+      video.addEventListener('loadstart', () => {
+        videoContainer.classList.add('video-loading');
+      });
+
+      video.addEventListener('canplay', () => {
+        videoContainer.classList.remove('video-loading');
+      });
+    </script>
+</body>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hls.js/1.5.8/hls.min.js"></script>
+<script>
+  /**
+    * 
+    * This module provides functionality to stream and download videos from SkillCapped using HLS (HTTP Live Streaming).
+    * It includes features for video segment detection, streaming, and batch downloading.
+    * 
+    * Global Variables
+    * ---------------
+    * @var {Hls|null} hls - HLS.js instance for video streaming
+    * @var {Array<string>} videoSegments - Stores URLs of detected video segments
+    * @var {string} videoId - Current video identifier
+    * 
+    * HLS Configuration
+    * ----------------
+    * The HLS player is initialized with the following configuration:
+    * - maxBufferSize: 0 (unlimited buffer size)
+    * - maxBufferLength: 30 seconds
+    * - startPosition: 0 (start from beginning)
+    * 
+    * Video ID Format
+    * --------------
+    * Video IDs are extracted using regex pattern: /([a-z0-9]{10})(:?\/|$)/g
+    * Example valid video ID: "p1qcnwqt75"
+    * 
+    * URL Structure
+    * ------------
+    * Video segments follow the pattern:
+    * https://d13z5uuzt1wkbz.cloudfront.net/{videoId}/HIDDEN4500-{paddedIndex}.ts
+    * Where paddedIndex is a 5-digit zero-padded number (e.g., "00001")
+*/
+
+  /**
+   * Initializes HLS streaming capability if supported by the browser
+   * @type {Object} hlsjsConfig - Configuration for HLS.js
+   * @property {number} maxBufferSize - Maximum buffer size (0 for unlimited)
+   * @property {number} maxBufferLength - Maximum buffer length in seconds
+   * @property {number} startPosition - Starting position for playback
+   */
+  var hls = null;
+  var videoSegments = [];
+  var videoId = '';
+
+  if (Hls.isSupported()) {
+    var hlsjsConfig = {
+      "maxBufferSize": 0,
+      "maxBufferLength": 30,
+      "startPosition": 0
+    };
+    hls = new Hls(hlsjsConfig);
+    hls.on(Hls.Events.MANIFEST_PARSED, function () {
+      video.play();
+      document.getElementById('downloadBtn').disabled = false;
+    });
+  }
+
+  const rgx = /([a-z0-9]{10})(:?\/|$)/g;
+  /**
+   * Streams video content from a SkillCapped URL
+   * 
+   * Process:
+   * 1. Validates and extracts video ID from input URL
+   * 2. Detects available video segments
+   * 3. Generates HLS manifest
+   * 4. Initiates video streaming
+   * 
+   * @async
+   * @function stream
+   * @throws {Error} If HLS is not supported or URL is invalid
+   * 
+   * Algorithm for segment detection:
+   * - Starts checking from segment 300
+   * - Uses a jump-back mechanism for efficient segment discovery
+   * - Handles 403 responses as segment unavailability indicators
+   * 
+   * Error Handling:
+   * - Browser compatibility check
+   * - Network connectivity validation
+   * - URL format validation
+   */
+  async function stream() {
+    document.getElementById('downloadBtn').disabled = true;
+    videoSegments = [];
+
+    if (hls == null) {
+      alert("hls not supported, please use a modern browser such as Chrome");
+      return;
+    }
+
+    const rawUrl = document.getElementById("url").value;
+    let ids = [];
+    let match = null;
+
+    while (match = rgx.exec(rawUrl)) {
+      ids.push(match[1]);
+    }
+
+    if (ids.length < 1) {
+      alert("invalid url");
+      return;
+    }
+
+    videoId = rawUrl.includes("browse3") ? ids[0] : ids[ids.length - 1];
+    let statusLabel = document.getElementById("status");
+
+    console.log(`video id is ${videoId}`);
+    console.log("looking for final part...");
+    let last = 0;
+    let jump = true;
+
+    for (let i = 300; i <= 1000; i++) {
+      if (i == 1000) {
+        alert("error finding last part");
+        return;
+      }
+
+      if (i == 0) i = 1;
+
+      const url = `https://d13z5uuzt1wkbz.cloudfront.net/${videoId}/HIDDEN4500-${String(i).padStart(5, "0")}.ts`;
+      console.log(`testing ${url}`);
+      statusLabel.innerText = `Looking for final part ; Testing ${i}...`;
+      try {
+        const resp = await fetch(url, { method: 'HEAD' });
+        if (resp.status === 403) {
+          if (i >= 50 && i % 50 == 0 && jump) {
+            last = i;
+            jump = true;
+            i -= 51;
+            continue;
+          }
+
+          break;
+        }
+        last = i;
+        videoSegments.push(url);
+        jump = false;
+      } catch (e) {
+        alert("fetch failed, please install a Cross-Origin disabler extension for your browser or check your internet connectivity.");
+        return;
+      }
+    }
+
+    statusLabel.innerText = "";
+
+    let data = "#EXTM3U\n#EXT-X-PLAYLIST-TYPE:VOD\n#EXT-X-TARGETDURATION:10";
+    for (let i = 0; i <= last; i++) {
+      data += `#EXTINF:10,\nhttps://d13z5uuzt1wkbz.cloudfront.net/${videoId}/HIDDEN4500-${String(i).padStart(5, "0")}.ts\n`;
+    }
+
+    console.log(data);
+
+    hls.loadSource(
+      "data:application/x-mpegURL;base64," + btoa(data)
+    );
+    hls.attachMedia(video);
+  }
+  /**
+ * Downloads all detected video segments and combines them into a single file with progress tracking
+ * 
+ * Process:
+ * 1. Initializes download UI overlay
+ * 2. Sequentially fetches video segments with progress tracking
+ * 3. Combines segments into a single blob
+ * 4. Triggers download of combined file
+ * 
+ * @async
+ * @function downloadVideo
+ * @throws {Error} If download or combination fails
+ * 
+ * Output Format:
+ * - File Type: MPEG-2 Transport Stream (.ts)
+ * - Filename Pattern: video_{videoId}.ts
+ * 
+ * Memory Management:
+ * - Sequential segment downloading to manage memory
+ * - Creates and revokes object URLs
+ * - Cleans up temporary DOM elements
+ * 
+ * Status Updates:
+ * - Real-time progress circle indicator
+ * - Segment count tracking
+ * - Download completion status
+ * - Error handling with user feedback
+ */
+  let isDownloading = false;
+  let shouldCancelDownload = false;
+
+  async function downloadVideo() {
+    if (isDownloading || !videoSegments.length) return;
+
+    // UI Elements
+    const downloadOverlay = document.getElementById('downloadOverlay');
+    const statusLabel = document.getElementById("status");
+    const progressCircle = document.querySelector('.progress-ring__circle-progress');
+    const percentageText = downloadOverlay.querySelector('.percentage');
+    const segmentCountText = downloadOverlay.querySelector('.segment-count span');
+    const statusText = downloadOverlay.querySelector('.status');
+
+    // Progress circle calculations
+    const circumference = 2 * Math.PI * 54; // r=54
+    progressCircle.style.strokeDasharray = circumference;
+
+    // Initialize download state
+    isDownloading = true;
+    shouldCancelDownload = false;
+    downloadOverlay.classList.add('active');
+    statusLabel.innerText = "Downloading video segments...";
+
+    try {
+      const totalSegments = videoSegments.length;
+      const segments = [];
+      segmentCountText.textContent = `0/${totalSegments}`;
+
+      // Sequential download with progress tracking
+      for (let i = 0; i < totalSegments; i++) {
+        if (shouldCancelDownload) {
+          throw new Error('Download cancelled');
+        }
+
+        statusText.textContent = `Downloading segment ${i + 1}/${totalSegments}`;
+
+        try {
+          const response = await fetch(videoSegments[i]);
+          if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+          const buffer = await response.arrayBuffer();
+          segments.push(buffer);
+        } catch (fetchError) {
+          throw new Error(`Failed to download segment ${i + 1}: ${fetchError.message}`);
+        }
+
+        // Update progress indicators
+        const progress = ((i + 1) / totalSegments) * 100;
+        const offset = circumference - (progress / 100) * circumference;
+        progressCircle.style.strokeDashoffset = offset;
+        percentageText.textContent = `${Math.round(progress)}%`;
+        segmentCountText.textContent = `${i + 1}/${totalSegments}`;
+      }
+
+      // Combine segments and trigger download
+      statusText.textContent = 'Preparing download...';
+      const blob = new Blob(segments, { type: 'video/MP2T' });
+      const url = URL.createObjectURL(blob);
+
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `video_${videoId}.ts`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+
+      // Success feedback
+      statusLabel.innerText = "Download complete!";
+      statusText.textContent = 'Complete!';
+
+      // Reset UI after delay
+      setTimeout(() => {
+        downloadOverlay.classList.remove('active');
+        progressCircle.style.strokeDashoffset = circumference;
+        percentageText.textContent = "0%";
+        statusText.textContent = "Downloading";
+      }, 1500);
+
+    } catch (error) {
+      // Error handling with user feedback
+      console.error('Download error:', error);
+
+      if (error.message === 'Download cancelled') {
+        statusLabel.innerText = "Download cancelled";
+        statusText.textContent = 'Cancelled';
+      } else {
+        statusLabel.innerText = "Download failed. Please try again.";
+        statusText.textContent = 'Failed';
+      }
+
+      // Reset UI after error
+      setTimeout(() => {
+        downloadOverlay.classList.remove('active');
+        progressCircle.style.strokeDashoffset = circumference;
+        percentageText.textContent = "0%";
+        statusText.textContent = "Downloading";
+      }, 1500);
+
+    } finally {
+      // Reset download state
+      isDownloading = false;
+      shouldCancelDownload = false;
+    }
+  }
+
+  /**
+   * Cancels the ongoing download process
+   * Sets the cancellation flag which is checked during download
+   */
+  function cancelDownload() {
+    if (isDownloading) {
+      shouldCancelDownload = true;
+    }
+  }
+
+  /**
+* Technical Details
+* ================
+* 
+* Segment Detection Strategy:
+* -------------------------
+* - Linear search with optimized jumping
+* - Handles segments in range 0-1000
+* - Uses HEAD requests for efficient checking
+* 
+* Error Scenarios:
+* --------------
+* 1. HLS Not Supported
+*    - Occurs in older browsers
+*    - Requires Chrome or modern browser
+* 
+* 2. Network Errors
+*    - CORS issues
+*    - Connection problems
+*    - Server responses (403, etc.)
+* 
+* 3. Invalid URLs
+*    - Malformed video IDs
+*    - Missing segments
+* 
+* Performance Considerations:
+* -------------------------
+* - Concurrent segment downloads
+* - Efficient segment detection
+* - Memory management for large files
+* 
+* Browser Requirements:
+* -------------------
+* - Modern browser with HLS support
+* - CORS disabled for cross-origin requests
+* - Sufficient memory for video processing
+* 
+* Security Notes:
+* -------------
+* - Requires CORS bypass for segment access
+* - Handles only legitimate SkillCapped URLs
+* - No credential handling or storage
+*/
+</script>
+</body>
+
+</html>
